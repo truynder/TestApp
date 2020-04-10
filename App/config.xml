@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<data>
+    <parametr>
+        <name>SipDomain</name>
+        <value>192.168.129.70</value>
+    </parametr>
+    <parametr>
+        <name>SipLogin</name>
+        <value>0001</value>
+    </parametr>
+    <parametr>
+        <name>SipPassword</name>
+        <value>123456</value>
+    </parametr>
+</data>>
