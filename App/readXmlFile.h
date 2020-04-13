@@ -3,6 +3,7 @@
 #include <QString>
 #include "PjSipadptr.h"
 #include <QtXml/QtXml>
+#include <QApplication>
 
 QMap<QString,QString> ReadXMLFile();
 

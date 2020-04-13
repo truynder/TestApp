@@ -27,7 +27,7 @@ void AddContact::on_saveBut_clicked()
     QString name=ui->nameLine->text();
     QString phone=ui->phoneLine->text();
     db=QSqlDatabase::addDatabase("QSQLITE");
-    db.setDatabaseName("users.db");
+    db.setDatabaseName(QApplication::applicationDirPath() +"/config/users.db");
     if(db.open()){
          sqlQuery=QSqlQuery(db);
          sqlQuery.prepare("INSERT INTO users(name,phone) VALUES (:name, :phone)");

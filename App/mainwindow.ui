@@ -15,36 +15,24 @@
   </property>
   <property name="styleSheet">
    <string notr="true">QMainWindow{
-border-image: url(&quot;img/bg.jpg&quot;);
+
 }
+
+
 </string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <widget class="QPushButton" name="pushButton_5">
-    <property name="geometry">
-     <rect>
-      <x>200</x>
-      <y>200</y>
-      <width>171</width>
-      <height>51</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Ответить на звонок</string>
-    </property>
-   </widget>
    <widget class="QLabel" name="label_2">
     <property name="geometry">
      <rect>
-      <x>540</x>
-      <y>10</y>
+      <x>500</x>
+      <y>0</y>
       <width>51</width>
       <height>21</height>
      </rect>
     </property>
     <property name="styleSheet">
      <string notr="true">QLabel{
-color:white;
 }</string>
     </property>
     <property name="text">
@@ -55,156 +43,266 @@ color:white;
     <property name="geometry">
      <rect>
       <x>30</x>
-      <y>280</y>
-      <width>75</width>
-      <height>23</height>
+      <y>270</y>
+      <width>91</width>
+      <height>31</height>
      </rect>
     </property>
+    <property name="styleSheet">
+     <string notr="true">QPushButton{
+border: 1px solid;
+border-color: rgb(148, 168, 199);
+border-radius: 10px;
+background: white;
+}
+
+QPushButton:hover{
+border-color: rgb(0, 0, 199);
+}
+
+QPushButton:pressed{
+background: rgb(219, 225, 233);
+}</string>
+    </property>
     <property name="text">
-     <string>Contact</string>
+     <string>Контакты</string>
     </property>
    </widget>
-   <widget class="QTabWidget" name="tabWidget">
+   <widget class="QWidget" name="widget" native="true">
     <property name="geometry">
      <rect>
-      <x>170</x>
-      <y>30</y>
-      <width>221</width>
-      <height>131</height>
+      <x>160</x>
+      <y>40</y>
+      <width>241</width>
+      <height>151</height>
      </rect>
     </property>
     <property name="styleSheet">
      <string notr="true">QWidget{
-background-color:;
+background:white;
+border: 2px solid;
+border-color:rgb(148, 168, 199);
+border-radius: 10px;
 }
-
-
 </string>
     </property>
-    <property name="currentIndex">
-     <number>0</number>
-    </property>
-    <widget class="QWidget" name="tab">
-     <attribute name="title">
-      <string>Tab 1</string>
-     </attribute>
-     <widget class="QLineEdit" name="lineEdit">
-      <property name="geometry">
-       <rect>
-        <x>60</x>
-        <y>20</y>
-        <width>101</width>
-        <height>21</height>
-       </rect>
-      </property>
-      <property name="styleSheet">
-       <string notr="true"/>
-      </property>
-     </widget>
-     <widget class="QPushButton" name="pushButton_2">
-      <property name="geometry">
-       <rect>
-        <x>90</x>
-        <y>50</y>
-        <width>31</width>
-        <height>31</height>
-       </rect>
-      </property>
-      <property name="styleSheet">
-       <string notr="true">QPushButton{
-border-image: url(&quot;img/call1.png&quot;);
+    <widget class="QLabel" name="labelRemoteName">
+     <property name="geometry">
+      <rect>
+       <x>100</x>
+       <y>30</y>
+       <width>71</width>
+       <height>20</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>14</pointsize>
+       <weight>75</weight>
+       <bold>true</bold>
+      </font>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QLabel{
+border:none
+}</string>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="pushButton_6">
+     <property name="geometry">
+      <rect>
+       <x>180</x>
+       <y>90</y>
+       <width>31</width>
+       <height>31</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QPushButton{
+border-image: url(:/new/img/img/ring5.png);
+border:none;
 }
 
 QPushButton:hover{
-border-image: url(&quot;img/call2.png&quot;);
+border-image:url(:/new/img/img/ring4.png);
+border:none;
 }
 
 QPushButton:pressed{
-border-image: url(&quot;img/call3.png&quot;);
+border-image:url(:/new/img/img/ring6.png);
+border:none;
 }</string>
-      </property>
-      <property name="text">
-       <string/>
-      </property>
-     </widget>
-     <widget class="QPushButton" name="pushButton_3">
-      <property name="geometry">
-       <rect>
-        <x>130</x>
-        <y>50</y>
-        <width>31</width>
-        <height>31</height>
-       </rect>
-      </property>
-      <property name="styleSheet">
-       <string notr="true">QPushButton{
-border-image: url(&quot;img/pause1.png&quot;);
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="pushButton_2">
+     <property name="geometry">
+      <rect>
+       <x>100</x>
+       <y>90</y>
+       <width>31</width>
+       <height>31</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QPushButton{
+border-image: url(:/new/img/img/ring1.png);
+border:none;
 }
 
 QPushButton:hover{
-border-image: url(&quot;img/pause2.png&quot;);
+border-image: url(:/new/img/img/ring2.png);
+border:none;
 }
 
 QPushButton:pressed{
-border-image: url(&quot;img/pause3.png&quot;);
+border-image: url(:/new/img/img/ring3.png);
+border:none;
 }</string>
-      </property>
-      <property name="text">
-       <string/>
-      </property>
-     </widget>
-     <widget class="QPushButton" name="pushButton_4">
-      <property name="geometry">
-       <rect>
-        <x>0</x>
-        <y>40</y>
-        <width>41</width>
-        <height>41</height>
-       </rect>
-      </property>
-      <property name="styleSheet">
-       <string notr="true">QPushButton{
-border-image: url(&quot;img/play1.png&quot;);
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="pushButton_5">
+     <property name="geometry">
+      <rect>
+       <x>60</x>
+       <y>90</y>
+       <width>31</width>
+       <height>31</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QPushButton{
+border-image: url(:/new/img/img/ring1.png);
+border:none;
 }
 
 QPushButton:hover{
-border-image: url(&quot;img/play2.png&quot;);
+border-image: url(:/new/img/img/ring2.png);
+border:none;
 }
 
 QPushButton:pressed{
-border-image: url(&quot;img/play3.png&quot;);
+border-image: url(:/new/img/img/ring3.png);
+border:none;
 }</string>
-      </property>
-      <property name="text">
-       <string/>
-      </property>
-     </widget>
-     <widget class="QPushButton" name="pushButton_6">
-      <property name="geometry">
-       <rect>
-        <x>170</x>
-        <y>50</y>
-        <width>31</width>
-        <height>31</height>
-       </rect>
-      </property>
-      <property name="styleSheet">
-       <string notr="true">QPushButton{
-border-image: url(&quot;img/cancel2.png&quot;);
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="pushButton_3">
+     <property name="geometry">
+      <rect>
+       <x>140</x>
+       <y>90</y>
+       <width>31</width>
+       <height>31</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QPushButton{
+border-image: url(:/new/img/img/ring7.png);
+border:none;
 }
 
 QPushButton:hover{
-border-image: url(&quot;img/cancel1.png&quot;);
+border-image:url(:/new/img/img/ring8.png);
+border:none;
 }
 
 QPushButton:pressed{
-border-image: url(&quot;img/cancel3.png&quot;);
+border-image: url(:/new/img/img/ring9.png);
+border:none;
 }</string>
-      </property>
-      <property name="text">
-       <string/>
-      </property>
-     </widget>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+    </widget>
+    <widget class="QPushButton" name="pushButton_4">
+     <property name="geometry">
+      <rect>
+       <x>20</x>
+       <y>90</y>
+       <width>31</width>
+       <height>31</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QPushButton{
+border-image: url(:/new/img/img/ring10.png);
+border:none;
+}
+
+QPushButton:hover{
+border-image: url(:/new/img/img/ring11.png);
+border:none;
+}
+
+QPushButton:pressed{
+border-image: url(:/new/img/img/ring12.png);
+border:none;
+}</string>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+    </widget>
+    <widget class="QLineEdit" name="lineEdit">
+     <property name="geometry">
+      <rect>
+       <x>70</x>
+       <y>30</y>
+       <width>101</width>
+       <height>21</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>7</pointsize>
+       <weight>50</weight>
+       <bold>false</bold>
+      </font>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QLineEdit{
+border: 1px solid;
+border-color: rgb(148, 168, 199);
+border-radius: 10px;
+background: white;
+}</string>
+     </property>
+    </widget>
+    <widget class="QLabel" name="labelTime">
+     <property name="geometry">
+      <rect>
+       <x>110</x>
+       <y>60</y>
+       <width>91</width>
+       <height>16</height>
+      </rect>
+     </property>
+     <property name="font">
+      <font>
+       <pointsize>7</pointsize>
+      </font>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QLabel{
+border:none;
+}</string>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
     </widget>
    </widget>
   </widget>
@@ -219,18 +317,24 @@ border-image: url(&quot;img/cancel3.png&quot;);
    </property>
    <widget class="QMenu" name="menu">
     <property name="title">
-     <string>меню</string>
+     <string>Меню</string>
     </property>
     <addaction name="separator"/>
     <addaction name="separator"/>
     <addaction name="actionOpenDialog"/>
+    <addaction name="action"/>
    </widget>
    <addaction name="menu"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
   <action name="actionOpenDialog">
    <property name="text">
-    <string>OpenDialog</string>
+    <string>Диалоговое окно</string>
+   </property>
+  </action>
+  <action name="action">
+   <property name="text">
+    <string>Настройки</string>
    </property>
   </action>
  </widget>

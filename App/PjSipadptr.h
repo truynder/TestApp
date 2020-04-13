@@ -17,8 +17,6 @@ using namespace std;
 class PjSipadaptr:public QObject {
     Q_OBJECT
 public:
-   // PjSipadaptr();
-    //PjSipadaptr(const string SIP_NAME, const string SIP_DOMAIN, const string SIP_PASSWORD);
     static PjSipadaptr *instance();
     int loginOnStation();
     int logout();
@@ -26,19 +24,17 @@ public:
     int answerCall();
     int endCall();
     int endMyCall();
-    int setSocketParams();
-    int getIp();
-    int getPort();
     int setHold();
     int reInvate();
     void callAnswer();
     void hangUp();
     int getCallId();
-    void ui_write_settings(const char *);
     void set_value(string, string);
-    void SaveXMLFile(PjSipadaptr *adptr);
     string getSipName();
     string getSipPassword();
+    string getSipDomain();
+    string getSipPort();
+    void setDomenPort(QString,QString);
     void enumPlayoutDevices();
     void music();
     void addContact();
@@ -78,12 +74,18 @@ signals:
    void labelChanged(string);
    void offSoundSignal();
    void onSoundSignal();
-   void loginSignal();
+   void loginSignal(bool);
    void outSignal();
    void onButSignal();
    void offButSignal();
    void showButSignal();
    void showHoldButSignal();
+   void unknowUserSignal();
+   void sendDomen(QString);
+   void sendPort(QString);
+   void incomingCall(QString);
+   void stateDisconnected();
+   void showHoldSignal();
 };
 
 #endif // PJSIPADPTR_H

@@ -1,5 +1,6 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
+#include <QGraphicsDropShadowEffect>
 
 
 using namespace pj;
@@ -18,7 +19,11 @@ MainWindow::MainWindow(QWidget *parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-    ui->tabWidget->setTabText(0,"");
+    QSize size(600,350);
+    setFixedSize(size);
+    statusBar()->setSizeGripEnabled(false);
+
+
     setWindowTitle("TestApp");
     dcontact=new DialogContact(this);
     dlg=new Dialog(this);
@@ -29,10 +34,11 @@ MainWindow::MainWindow(QWidget *parent)
     ui->pushButton_6->setToolTip("Завершить");
     ui->pushButton_3->hide();
     ui->pushButton_4->hide();
+    ui->pushButton_5->hide();
     ui->pushButton_6->hide();
+    ui->labelTime->hide();
+    ui->lineEdit->setPlaceholderText("Введите номер");
 
-    //button->setIcon(QIcon(":/ringIcon.png"));
-    //ui->pushButton_2->setIcon(QIcon(":/images/start_hov.png"));
     /*-----------------------*/
     timer=new QTimer(this);
     connect(timer, SIGNAL(timeout()),this,SLOT(getTime()));
@@ -45,6 +51,10 @@ MainWindow::MainWindow(QWidget *parent)
     connect(adptr,SIGNAL(showButSignal()),this,SLOT(showButSlot()));
     connect(adptr,SIGNAL(showHoldButSignal()),this,SLOT(showHoldButSlot()));
     connect(dcontact,SIGNAL(sendPhoneSignal(QString)),this,SLOT(getPhoneSlot(QString)));
+    connect(adptr,SIGNAL(loginSignal(bool)),this,SLOT(regState(bool)));
+    connect(adptr,SIGNAL(incomingCall(QString)),this,SLOT(incomingCallSlot(QString)));
+    connect(adptr,SIGNAL(stateDisconnected()),this,SLOT(stateDisconnectedSlot()));
+    connect(adptr,SIGNAL(showHoldSignal()),this,SLOT(showHold()));
     timer->start(1000);
 }
 
@@ -57,52 +67,34 @@ MainWindow::~MainWindow()
 
 
 
-void MainWindow::onButtonClicked()
-{
-
-}
-
-
 void MainWindow::on_pushButton_2_clicked()
 {
+    QMap<QString,QString> data;
+    data=ReadXMLFile();
     pjsua_set_no_snd_dev();
-   // pjsua_snd_dev_param *snd_param=new pjsua_snd_dev_param();
-    //pjsua_set_snd_dev2(snd_param);
 
     pj_status_t status;
     PjSipadaptr *adptr=PjSipadaptr::instance();
 
-    pjsua_player_id player_id;
-    string file="input.48.wav";
-    pj_str_t ring=pj_str((char *)file.c_str());
-    //status = pjsua_conf_connect( pjsua_player_get_conf_port(player_id), pjsua_call_get_conf_port(adptr->getCallId()));
-    status = pjsua_conf_connect(0,0);
-    status=pjsua_player_create(&ring, 0, &player_id);
-
-
-
-    string user=ui->lineEdit->text().toUtf8().constData();
-    string id="sip:"+user+"@192.168.129.70;transport=tcp";
-    pj_str_t uri=pj_str((char *)id.c_str());
-    status = adptr->makeCall(uri);
-    if (status != PJ_SUCCESS){
+   /*if (status != PJ_SUCCESS){
         error_exit("Error making call", status);
+    }*/
+    try {
+            string user=ui->lineEdit->text().toUtf8().constData();
+            if(user==""){
+                throw(1);
+            }
+            string id="sip:"+user+"@"+data.value("SipDomain").toStdString()+";transport=tcp";
+            pj_str_t uri=pj_str((char *)id.c_str());
+            status = adptr->makeCall(uri);
+            ui->labelTime->show();
+    } catch (int err) {
+            QMessageBox::warning(this,"Внимание","Введите номер");
     }
+
 }
 
-/*void MainWindow::on_button1_clicked()
-{
-    PjSipadaptr *adptr=PjSipadaptr::instance();
-    string name=ui->login->text().toUtf8().constData();
-    string password=ui->password->text().toUtf8().constData();
-    adptr->set_value(name,password);
-    adptr->loginOnStation();
 
-    *Save config*
-    adptr->SaveXMLFile(adptr);
-
-    adptr->addContact();
-}*/
 
 void MainWindow::on_pushButton_3_clicked()
 {
@@ -136,14 +128,13 @@ void MainWindow::getTime()
     PjSipadaptr *adptr=PjSipadaptr::instance();
     pjsua_call_info *ci=new pjsua_call_info();
     pjsua_call_get_info(adptr->getCallId(), ci);
-   // ui->label->setText(QString::number( ci->total_duration.sec));
-    ui->tabWidget->setTabText(0,"Продолжительность звонка="+QString::number( ci->total_duration.sec)+" секунд");
+
+    ui->labelTime->setText(QString::number( ci->total_duration.sec)+"сек");
 }
 
 void MainWindow::on_actionOpenDialog_triggered()
 {
-    dlg=new Dialog(this);
-    dlg->show();
+    dlg->openDialog();
 }
 
 void MainWindow::setUserLabel(string sip_name)
@@ -161,10 +152,11 @@ void MainWindow::offButSlot()
 
 void MainWindow::onButSlot()
 {
-     //QWidget::setStyleSheet("QPushButton{background-color:red;}");
     ui->pushButton_3->show();
-   // ui->pushButton_4->show();
+    ui->pushButton_4->hide();
+    ui->pushButton_5->hide();
     ui->pushButton_6->show();
+    ui->pushButton_2->hide();
 }
 
 
@@ -198,9 +190,219 @@ void MainWindow::showHoldButSlot()
     ui->pushButton_3->hide();
     ui->pushButton_4->setGeometry(geom);
     ui->pushButton_4->show();
+    ui->pushButton_6->setDisabled(true);
+    ui->pushButton_6->setStyleSheet("QPushButton{"
+                                  "border-image: url(':/new/img/img/ring6.png');"
+                                  "}");
 }
 
 void MainWindow::getPhoneSlot(QString phone)
 {
     ui->lineEdit->setText(phone);
+}
+
+void MainWindow::regState(bool renew)
+{
+    QPushButton *state;
+    int x=ui->label_2->geometry().x();
+    int y=ui->label_2->geometry().y();
+    int w=ui->label_2->geometry().width();
+    if(renew==1){
+    ui->label_2->setText(QString::fromUtf8(PjSipadaptr::instance()->getSipName().c_str()));
+    state=new QPushButton(this);
+    state->setStyleSheet("QPushButton{"
+                      "background-color: green;"
+                      "border-style: solid;"
+                      "border-width:1px;"
+                      "border-radius:4px;"
+
+                      "max-width:8px;"
+                      "max-height:8px;"
+                      "min-width:8px;"
+                      "min-height:8px;"
+                     "}");
+    state->setGeometry(x+w,y+27,8,8);
+    state->show();
+    saveXMLFile();
+    }
+    else{
+       ui->label_2->setText(QString::fromUtf8(PjSipadaptr::instance()->getSipName().c_str()));
+       state=new QPushButton(this);
+       state->setStyleSheet("QPushButton{"
+                         "background-color: red;"
+                         "border-style: solid;"
+                         "border-width:1px;"
+                         "border-radius:4px;"
+
+                         "max-width:8px;"
+                         "max-height:8px;"
+                         "min-width:8px;"
+                         "min-height:8px;"
+                        "}");
+       state->setGeometry(x+w,y+27,8,8);
+       state->show();
+       saveXMLFile();
+    }
+}
+
+void MainWindow::saveXMLFile()
+{
+    QMap<QString,QString> map;
+    map["SipLogin"]=QString::fromStdString(PjSipadaptr::instance()->getSipName());
+    map["SipDomain"]=QString::fromStdString(PjSipadaptr::instance()->getSipDomain());
+    map["SipPassword"]=QString::fromStdString(PjSipadaptr::instance()->getSipPassword());
+    map["SipPort"]=QString::fromStdString(PjSipadaptr::instance()->getSipPort());
+
+
+    QFile *file=new QFile(QApplication::applicationDirPath() +"/config/config.xml");
+    file->open(QIODevice::WriteOnly | QIODevice::ReadOnly);
+
+     QXmlStreamWriter xmlWriter(file);
+     xmlWriter.setAutoFormatting(true);
+     xmlWriter.writeStartDocument();
+
+     xmlWriter.writeStartElement("data");
+     QMapIterator<QString,QString> i(map);
+     while(i.hasNext()){
+      i.next();
+      xmlWriter.writeStartElement("parametr");
+      xmlWriter.writeTextElement("name", i.key() );
+      xmlWriter.writeTextElement("value", i.value());
+      xmlWriter.writeEndElement();
+      }
+      xmlWriter.writeEndElement();
+      file->close();
+}
+
+void MainWindow::on_action_triggered()
+{
+    QMap<QString,QString> data;
+    data=ReadXMLFile();
+
+    form=new QWidget();
+    form->setWindowTitle("Настройки");
+    form->setMinimumWidth(250);
+    form->setMinimumHeight(200);
+    layout = new QGridLayout();
+
+    labelDomen=new QLabel();
+    lineDomen=new QLineEdit();
+    lineDomen->setStyleSheet("QLineEdit{"
+                                 "border: 1px solid;"
+                                 "border-color: rgb(148, 168, 199);"
+                                 "border-radius: 10px;"
+                                 "background: white;"
+                                 "}"
+                                 "QPushButton:hover{"
+                                 "border-color: rgb(0, 0, 199);"
+                                 "}"
+                                 "QPushButton:pressed{"
+                                 "background: rgb(219, 225, 233);"
+                                 "}");
+
+    labelPort=new QLabel();
+    linePort=new QLineEdit();
+    linePort->setStyleSheet("QLineEdit{"
+                                 "border: 1px solid;"
+                                 "border-color: rgb(148, 168, 199);"
+                                 "border-radius: 10px;"
+                                 "background: white;"
+                                 "}"
+                                 "QPushButton:hover{"
+                                 "border-color: rgb(0, 0, 199);"
+                                 "}"
+                                 "QPushButton:pressed{"
+                                 "background: rgb(219, 225, 233);"
+                                 "}");
+    butDomainPort=new QPushButton();
+    butDomainPort->setStyleSheet("QPushButton{"
+                                 "border: 1px solid;"
+                                 "border-color: rgb(148, 168, 199);"
+                                 "border-radius: 10px;"
+                                 "background: white;"
+                                 "}"
+                                 "QPushButton:hover{"
+                                 "border-color: rgb(0, 0, 199);"
+                                 "}"
+                                 "QPushButton:pressed{"
+                                 "background: rgb(219, 225, 233);"
+                                 "}");
+
+    linePort->setMinimumHeight(25);
+    lineDomen->setMinimumHeight(25);
+    linePort->setText(data.value("SipPort"));
+    lineDomen->setText(data.value("SipDomain"));
+
+    butDomainPort->setMinimumHeight(40);
+    butDomainPort->setText("Сохранить");
+
+    labelDomen->setText("Домен SIP");
+    labelPort->setText("Порт");
+    layout->addWidget(labelDomen);
+    layout->addWidget(lineDomen);
+
+    layout->addWidget(labelPort);
+    layout->addWidget(linePort);
+    layout->addWidget(butDomainPort);
+    form->setLayout(layout);
+    form->show();
+
+    connect(butDomainPort,SIGNAL(clicked()),this,SLOT(saveDomenPort()));
+}
+
+void MainWindow::saveDomenPort()
+{
+    QString domen=lineDomen->text();
+    QString port=linePort->text();
+    PjSipadaptr::instance()->setDomenPort(domen,port);
+    lineDomen->setDisabled(true);
+    linePort->setDisabled(true);
+    butDomainPort->setDisabled(true);
+    form->close();
+    MainWindow::saveXMLFile();
+}
+
+
+
+void MainWindow::incomingCallSlot(QString remotename)
+{
+    ui->pushButton_2->hide();
+    ui->pushButton_5->setGeometry(ui->pushButton_2->geometry());
+    ui->pushButton_5->show();
+    ui->labelTime->show();
+
+
+    ui->labelRemoteName->show();
+    ui->labelRemoteName->setText(remotename);
+   // ui->labelRemoteName->setGeometry(ui->lineEdit->geometry());
+    ui->lineEdit->hide();
+}
+
+void MainWindow::stateDisconnectedSlot()
+{
+    ui->pushButton_3->hide();
+    ui->pushButton_4->hide();
+    ui->pushButton_5->hide();
+    ui->pushButton_6->hide();
+    ui->pushButton_2->show();
+    ui->labelRemoteName->hide();
+    ui->lineEdit->show();
+    ui->labelTime->hide();
+}
+
+void MainWindow::showHold()
+{
+    ui->pushButton_3->show();
+    ui->pushButton_4->hide();
+    ui->pushButton_6->setEnabled(true);
+    ui->pushButton_6->setStyleSheet("QPushButton{"
+                                  "border-image: url(':/new/img/img/ring5.png');"
+                                  "}"
+                                   "QPushButton:hover{"
+                                   "border-image: url(':/new/img/img/ring4.png');"
+                                   "}"
+                                   "QPushButton:pressed{"
+                                   "border-image: url(':/new/img/img/ring6.png');"
+                                  "}"
+                                   );
 }

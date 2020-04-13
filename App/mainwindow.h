@@ -24,6 +24,7 @@
 #include <iostream>
 #include <PjSipadptr.h>
 #include <readXmlFile.h>
+#include <QMessageBox>
 using namespace std;
 
 QT_BEGIN_NAMESPACE
@@ -39,10 +40,10 @@ public:
     ~MainWindow();
 
 public slots:
-    void onButtonClicked();
     void setUserLabel(string);
     void onButSlot();
     void offButSlot();
+    static void saveXMLFile();
 
 
 private slots:
@@ -69,12 +70,36 @@ private slots:
 
     void getPhoneSlot(QString);
 
+    void regState(bool);
+
     void MainWindow::moveEvent(QMoveEvent *event);
+
+    void on_action_triggered();
+
+    void saveDomenPort();
+
+    void incomingCallSlot(QString);
+
+    void stateDisconnectedSlot();
+
+    void showHold();
 
 private:
     Ui::MainWindow *ui;
     QTimer *timer;
     Dialog *dlg;
     DialogContact *dcontact;
+
+
+    QWidget *form;
+    QGridLayout *layout;
+    QLabel *labelDomen;
+    QLineEdit *lineDomen;
+    QLabel *labelPort;
+    QLineEdit *linePort;
+    QPushButton *butDomainPort;
+    QString domen;
+    QString port;
+
 };
 #endif // MAINWINDOW_H

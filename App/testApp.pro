@@ -15,6 +15,12 @@ INCLUDEPATH += \
     C:\Users\ssafarov\Downloads\pjproject-2.10v2\pjproject-2.10\pjnath\include \
     C:\Users\ssafarov\Downloads\pjproject-2.10v2\pjproject-2.10\pjsip\include \
     C:\Users\ssafarov\Downloads\pjproject-2.10TEST\pjproject-2.10\pjsip-apps\src\pjsua\include \
+    C:\Users\ssafarov\Downloads\pjprojectX64\pjproject-2.10\pjlib\include \
+    C:\Users\ssafarov\Downloads\pjprojectX64\pjproject-2.10\pjmedia\include \
+    C:\Users\ssafarov\Downloads\pjprojectX64\pjproject-2.10\pjlib-util\include \
+    C:\Users\ssafarov\Downloads\pjprojectX64\pjproject-2.10\pjnath\include \
+    C:\Users\ssafarov\Downloads\pjprojectX64\pjproject-2.10\pjsip\include \
+    C:\Users\ssafarov\Downloads\pjprojectX64\pjproject-2.10\pjsip-apps\src\pjsua\include \
 
 
 
@@ -27,6 +33,19 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 
 LIBS += \
+    #C:\Users\ssafarov\Downloads\pjprojectX64\pjproject-2.10\pjlib\lib\libpjproject-x86_64-x64-vc14-Release-Dynamic.lib \
+    #C:\Users\ssafarov\Downloads\pjprojectX64\pjproject-2.10\pjlib\lib\pjlib-util-x86_64-x64-vc14-Release-Dynamic.lib \
+    #C:\Users\ssafarov\Downloads\pjprojectX64\pjproject-2.10\pjlib\lib\pjlib-x86_64-x64-vc14-Release-Dynamic.lib \
+    #C:\Users\ssafarov\Downloads\pjprojectX64\pjproject-2.10\pjlib\lib\pjmedia-audiodev-x86_64-x64-vc14-Release-Dynamic.lib \
+    #C:\Users\ssafarov\Downloads\pjprojectX64\pjproject-2.10\pjlib\lib\pjmedia-codec-x86_64-x64-vc14-Release-Dynamic.lib \
+    #C:\Users\ssafarov\Downloads\pjprojectX64\pjproject-2.10\pjlib\lib\pjmedia-videodev-x86_64-x64-vc14-Release-Dynamic.lib \
+    #C:\Users\ssafarov\Downloads\pjprojectX64\pjproject-2.10\pjlib\lib\pjmedia-x86_64-x64-vc14-Release-Dynamic.lib \
+    #C:\Users\ssafarov\Downloads\pjprojectX64\pjproject-2.10\pjlib\lib\pjnath-x86_64-x64-vc14-Release-Dynamic.lib \
+    #C:\Users\ssafarov\Downloads\pjprojectX64\pjproject-2.10\pjlib\lib\pjsip-core-x86_64-x64-vc14-Release-Dynamic.lib \
+    #C:\Users\ssafarov\Downloads\pjprojectX64\pjproject-2.10\pjlib\lib\pjsip-simple-x86_64-x64-vc14-Release-Dynamic.lib \
+    #C:\Users\ssafarov\Downloads\pjprojectX64\pjproject-2.10\pjlib\lib\pjsip-ua-x86_64-x64-vc14-Release-Dynamic.lib \
+    #C:\Users\ssafarov\Downloads\pjprojectX64\pjproject-2.10\pjlib\lib\pjsua2-lib-x86_64-x64-vc14-Release-Dynamic.lib \
+    #C:\Users\ssafarov\Downloads\pjprojectX64\pjproject-2.10\pjlib\lib\pjsua-lib-x86_64-x64-vc14-Release-Dynamic.lib \
     C:\Users\ssafarov\Downloads\pjproject-2.10v2\pjproject-2.10\pjlib\lib\pjlib-i386-Win32-vc14-Release-Dynamic.lib \
     C:\Users\ssafarov\Downloads\pjproject-2.10v2\pjproject-2.10\pjmedia\lib\pjmedia-audiodev-i386-Win32-vc14-Release-Dynamic.lib \
     C:\Users\ssafarov\Downloads\pjproject-2.10v2\pjproject-2.10\pjmedia\lib\pjmedia-codec-i386-Win32-vc14-Release-Dynamic.lib \
@@ -92,3 +111,6 @@ FORMS += \
 qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
+
+RESOURCES += \
+    resource.qrc

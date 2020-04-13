@@ -29,16 +29,15 @@ DialogContact::DialogContact(QWidget *parent) :
     addcontact=new AddContact(this);
     connect(addcontact, SIGNAL(createButSignal()), this, SLOT(createButSlot()));
 
-
     ui->tableWidget->setColumnCount(4);
     ui->tableWidget->setHorizontalHeaderItem(0, new QTableWidgetItem("name"));
     ui->tableWidget->setHorizontalHeaderItem(1, new QTableWidgetItem("phone"));
     ui->tableWidget->setHorizontalHeaderItem(2, new QTableWidgetItem(""));
     ui->tableWidget->setHorizontalHeaderItem(3, new QTableWidgetItem(""));
 
-    if(QFile::exists("./users.db")){
+    if(QFile::exists(QApplication::applicationDirPath() +"/config/users.db")){
     db=QSqlDatabase::addDatabase("QSQLITE");
-    db.setDatabaseName("users.db");
+    db.setDatabaseName(QApplication::applicationDirPath() +"/config/users.db");
     if(db.open()){
          sqlQuery=QSqlQuery(db);
          sqlQuery.exec("SELECT *FROM users");
@@ -71,7 +70,7 @@ DialogContact::DialogContact(QWidget *parent) :
     }
     else{
         db=QSqlDatabase::addDatabase("QSQLITE");
-        db.setDatabaseName("users.db");
+        db.setDatabaseName(QApplication::applicationDirPath() +"/config/users.db");
 
         if(db.open()){
             sqlQuery=QSqlQuery(db);
@@ -99,7 +98,7 @@ void DialogContact::createButSlot()
     ui->tableWidget->setRowCount(rowCount+1);
 
         db=QSqlDatabase::addDatabase("QSQLITE");
-        db.setDatabaseName("users.db");
+        db.setDatabaseName(QApplication::applicationDirPath() +"/config/users.db");
 
         /*-----Парсим БД ---------*/
         if(db.open()){
@@ -139,7 +138,6 @@ void DialogContact::delButs()
 {
    QPushButton *click_btn = qobject_cast<QPushButton *>(sender());
    int rowId = ui->tableWidget->indexAt(click_btn->pos()).row();
-   //int rowId = click_btn->objectName().toInt();
    int rowCount=ui->tableWidget->rowCount();
    ui->tableWidget->removeRow(rowId);
    deleteBut.removeAt(indexDelBut-1);

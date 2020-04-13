@@ -47,19 +47,6 @@ background: rgb(185, 192, 202);
     <string>+</string>
    </property>
   </widget>
-  <widget class="QPushButton" name="pushButton">
-   <property name="geometry">
-    <rect>
-     <x>460</x>
-     <y>180</y>
-     <width>75</width>
-     <height>23</height>
-    </rect>
-   </property>
-   <property name="text">
-    <string>Закрыть</string>
-   </property>
-  </widget>
   <widget class="QTableWidget" name="tableWidget">
    <property name="geometry">
     <rect>
@@ -73,14 +60,59 @@ background: rgb(185, 192, 202);
   <widget class="QPushButton" name="pushButton_2">
    <property name="geometry">
     <rect>
-     <x>300</x>
-     <y>170</y>
-     <width>121</width>
-     <height>31</height>
+     <x>311</x>
+     <y>184</y>
+     <width>111</width>
+     <height>23</height>
     </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">QPushButton{
+border: 1px solid;
+border-color: rgb(148, 168, 199);
+border-radius: 10px;
+background: white;
+}
+
+QPushButton:hover{
+border-color: rgb(0, 0, 199);
+}
+
+QPushButton:pressed{
+background: rgb(219, 225, 233);
+}</string>
    </property>
    <property name="text">
     <string>удалить контакты</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="pushButton">
+   <property name="geometry">
+    <rect>
+     <x>454</x>
+     <y>184</y>
+     <width>75</width>
+     <height>23</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">QPushButton{
+border: 1px solid;
+border-color: rgb(148, 168, 199);
+border-radius: 10px;
+background: white;
+}
+
+QPushButton:hover{
+border-color: rgb(0, 0, 199);
+}
+
+QPushButton:pressed{
+background: rgb(219, 225, 233);
+}</string>
+   </property>
+   <property name="text">
+    <string>Закрыть</string>
    </property>
   </widget>
  </widget>

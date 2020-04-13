@@ -3,6 +3,8 @@
 #include <QString>
 #include <QtXml/QtXml>
 #include <pjmedia_audiodev.h>
+#include <QMessageBox>
+#include <QString>
 #define THIS_FILE	"APP"
 using namespace std;
 
@@ -23,12 +25,16 @@ PjSipadaptr  *PjSipadaptr::instance(){
 }
 
 void PjSipadaptr::set_value(string name, string password){
+    QMap<QString,QString> data;
+    data=ReadXMLFile();
     sip_name=name;
     sip_password=password;
-    sip_id=("sip:"+sip_name+"@"+"192.168.129.70");
+    sip_id=("sip:"+sip_name+"@"+data.value("SipDomain").toStdString());
     acfg->id = pj_str((char *)sip_id.c_str());
     acfg->cred_info[0].username = pj_str((char *)sip_name.c_str());
     acfg->cred_info[0].data = pj_str((char *)sip_password.c_str());
+    acfg->reg_uri = pj_str((char *)sip_reg.c_str());
+    //
 }
 
 
@@ -55,16 +61,23 @@ void PjSipadaptr::setCallId(pjsua_call_id c_id){
 }
 
 
-static void on_reg_started(pjsua_acc_id acc_id, pj_bool_t renew){
-     PjSipadaptr *adptr=PjSipadaptr::instance();
-    if(renew==1){
-        emit adptr->labelChanged(adptr->getSipName());
-        emit adptr->loginSignal();
+
+
+
+static void on_reg_state2(pjsua_acc_id acc_id, pjsua_reg_info *info){
+    PjSipadaptr *adptr=PjSipadaptr::instance();
+    bool result;
+    if(info->cbparam->code==404 || info->cbparam->code==403){
+        result=0;
+        emit adptr->loginSignal(result);
+        emit adptr->unknowUserSignal();
     }
     else{
-        emit adptr->outSignal();
+        result=info->renew;
+        emit adptr->loginSignal(result);
     }
 }
+
 
 
 /* Callback called by the library upon receiving incoming call */
@@ -81,7 +94,20 @@ static void on_incoming_call(pjsua_acc_id acc_id, pjsua_call_id call_id,
 
     pjsua_call_get_info(call_id, &ci);
     if(ci.state==PJSIP_INV_STATE_INCOMING){
-       // adptr->changeButSignal();
+
+        /*-----getRemoteSipName--------*/
+        char *name=ci.remote_info.ptr;
+        int i=0;
+        string str=name;
+        QString remotename="";
+        while(name[i]!='@'){
+            remotename.append(name[i]);
+            i++;
+        }
+        remotename=remotename.section(':',1,1);
+        /*--------------------------------*/
+
+         adptr->incomingCall(remotename);
     }
     else if(ci.state==PJSIP_INV_STATE_CONFIRMED){
 
@@ -117,11 +143,17 @@ static void on_call_state(pjsua_call_id call_id, pjsip_event *e)
         adptr->showButSignal();
     }
 
+    if(ci.state == PJSIP_INV_STATE_DISCONNECTED){
+        adptr->stateDisconnected();
+    }
+
 
     PJ_LOG(3,(THIS_FILE, "Call %d state=%.*s", call_id,
              (int)ci.state_text.slen,
              ci.state_text.ptr));
 }
+
+static int hold=0;
 
 /* Callback called by the library when call's media state has changed */
 static void on_call_media_state(pjsua_call_id call_id)
@@ -133,6 +165,7 @@ static void on_call_media_state(pjsua_call_id call_id)
 
     if(ci.media_status==PJSUA_CALL_MEDIA_LOCAL_HOLD){
         adptr->showHoldButSignal();
+        hold=1;
     }
 
 
@@ -140,6 +173,9 @@ static void on_call_media_state(pjsua_call_id call_id)
     // When media is active, connect call to sound device.
     pjsua_conf_connect(ci.conf_slot, 0);
     pjsua_conf_connect(0, ci.conf_slot);
+    }
+    if(ci.media_status == PJSUA_CALL_MEDIA_ACTIVE && hold==1){
+         adptr->showHoldSignal();
     }
 }
 
@@ -158,10 +194,11 @@ PjSipadaptr::PjSipadaptr(){
    /* Init pjsua */
     cfg=new pjsua_config();
     pjsua_config_default(cfg);
-    cfg->cb.on_reg_started = &on_reg_started;
+    cfg->cb.on_reg_state2 = &on_reg_state2;
     cfg->cb.on_incoming_call = &on_incoming_call;
     cfg->cb.on_call_media_state = &on_call_media_state;
     cfg->cb.on_call_state = &on_call_state;
+
 
     status = pjsua_init(cfg, NULL, NULL);
     if (status != PJ_SUCCESS) error_exit("Error in pjsua_init()", status);
@@ -170,7 +207,7 @@ PjSipadaptr::PjSipadaptr(){
     /* Add TCP transport. */
     tcfg=new pjsua_transport_config();
     pjsua_transport_config_default(tcfg);
-    tcfg->port = 5060;
+    tcfg->port = data.value("SipPort").toInt();
     status = pjsua_transport_create(PJSIP_TRANSPORT_TCP, tcfg, &t_id);
     if (status != PJ_SUCCESS) error_exit("Error creating transport", status);
 
@@ -206,6 +243,7 @@ void PjSipadaptr::onSoundSlot()
     pjsua_snd_dev_param *snd_param=new pjsua_snd_dev_param();
     pjsua_set_snd_dev2(snd_param);
 }
+
 
 PjSipadaptr::~PjSipadaptr(){
     delete s_instance;
@@ -273,31 +311,23 @@ string PjSipadaptr::getSipPassword(){
     return sip_password;
 }
 
-void PjSipadaptr::SaveXMLFile(PjSipadaptr *adptr){
-    QMap<QString,QString> map;
-    map["SipLogin"]=QString::fromStdString(adptr->sip_name);
-    map["SipDomain"]=QString::fromStdString(adptr->sip_domain);
-    map["SipPassword"]=QString::fromStdString(adptr->sip_password);
+string PjSipadaptr::getSipDomain()
+{
+    return sip_domain;
+}
+
+string PjSipadaptr::getSipPort(){
+    return QString::number(tcfg->port).toStdString();
+}
 
 
-    QFile *file=new QFile("config.xml");
-    file->open(QIODevice::WriteOnly | QIODevice::ReadOnly);
 
-     QXmlStreamWriter xmlWriter(file);
-     xmlWriter.setAutoFormatting(true);
-     xmlWriter.writeStartDocument();
-
-     xmlWriter.writeStartElement("data");
-     QMapIterator<QString,QString> i(map);
-     while(i.hasNext()){
-      i.next();
-      xmlWriter.writeStartElement("parametr");
-      xmlWriter.writeTextElement("name", i.key() );
-      xmlWriter.writeTextElement("value", i.value());
-      xmlWriter.writeEndElement();
-      }
-      xmlWriter.writeEndElement();
-      file->close();
+void PjSipadaptr::setDomenPort(QString domen,QString port)
+{
+    sip_domain=domen.toStdString();
+    sip_reg= ("sip:"+domen+";transport=tcp").toUtf8().constData();
+    tcfg->port=port.toInt();
+    MainWindow::saveXMLFile();
 }
 
 
@@ -439,7 +469,6 @@ void PjSipadaptr::addContact(){
            qDebug()<< "New buddy "<<baddyUrl<<" added at index " << buddy_id+1;
         }
        }
-      // return status;
 }
 
 

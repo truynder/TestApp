@@ -2,7 +2,7 @@
 
 
 bool isOpen(){
-    QFile file("config.xml");
+    QFile file(QApplication::applicationDirPath() +"/config/config.xml");
     if(!file.open(QIODevice::ReadOnly | QIODevice::Text))
         {
             qDebug() << "file no create";
@@ -13,12 +13,14 @@ bool isOpen(){
 
 QMap<QString,QString> createDefaultConfig(){
    QMap<QString,QString> data;
-   data["SipLogin"]="0001";
-   data["SipDomain"]="192.168.129.70";
-   data["SipPassword"]="123456";
+   data["SipLogin"]="";
+   data["SipDomain"]="";
+   data["SipPassword"]="";
+   data["SipPort"]="";
 
 
-   QFile *file=new QFile("config.xml");
+
+   QFile *file=new QFile(QApplication::applicationDirPath() + "/config/config.xml");
    file->open(QIODevice::WriteOnly | QIODevice::ReadOnly);
 
     QXmlStreamWriter xmlWriter(file);
@@ -43,7 +45,7 @@ QMap<QString,QString> ReadXMLFile(){
     QMap<QString,QString> map;
     QString name;
     QString value;
-    QFile* xmlFile = new QFile("config.xml");
+    QFile* xmlFile = new QFile(QApplication::applicationDirPath() +"/config/config.xml");
     xmlFile->open(QIODevice::ReadOnly | QIODevice::Text);
     QXmlStreamReader  *xmlReader = new QXmlStreamReader(xmlFile);
 
@@ -82,7 +84,7 @@ QMap<QString,QString> ReadXMLFile(){
     else{
     map=createDefaultConfig();
     }
-
+    xmlFile->close();
     return map;
 }
 

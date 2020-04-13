@@ -168,6 +168,41 @@ background: rgb(219, 225, 233);
     <string>Выход</string>
    </property>
   </widget>
+  <widget class="QPushButton" name="butSettings">
+   <property name="geometry">
+    <rect>
+     <x>30</x>
+     <y>290</y>
+     <width>32</width>
+     <height>32</height>
+    </rect>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">QPushButton{
+ background-color: white;
+ border-style: solid;
+ border-width:1px;
+ border-radius:15px;
+ border-color:  rgb(148, 168, 199);
+ max-width:30px;
+ max-height:30px;
+ min-width:30px;
+ min-height:30px;
+border-image:url(:/new/img/img/settings.png);
+}
+
+QPushButton:hover{
+ background:rgb(219, 225, 233);
+}
+
+QPushButton:pressed{
+background: rgb(185, 192, 202);
+}</string>
+   </property>
+   <property name="text">
+    <string/>
+   </property>
+  </widget>
  </widget>
  <resources/>
  <connections/>
