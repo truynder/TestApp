@@ -35,7 +35,6 @@ public:
     string getSipDomain();
     string getSipPort();
     void setDomenPort(QString,QString);
-    void enumPlayoutDevices();
     void music();
     void addContact();
     void subscribeUnsubsribe();
