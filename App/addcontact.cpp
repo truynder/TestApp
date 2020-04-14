@@ -4,8 +4,6 @@
 #include <QSqlField>
 #include <QFileDialog>
 
-/*Test*/
-
 AddContact::AddContact(QWidget *parent) :
     QDialog(parent),
     ui(new Ui::AddContact)

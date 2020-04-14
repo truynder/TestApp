@@ -185,7 +185,6 @@ PjSipadaptr::PjSipadaptr(){
     QMap<QString,QString> data;
     data=ReadXMLFile();
     pj_status_t status;
-
     msg_data=new pjsua_msg_data();
 
     status = pjsua_create();
@@ -230,7 +229,6 @@ PjSipadaptr::PjSipadaptr(){
    acfg->cred_info[0].username = pj_str((char *)sip_name.c_str());
    acfg->cred_info[0].data_type = PJSIP_CRED_DATA_PLAIN_PASSWD;
    acfg->cred_info[0].data = pj_str((char *)sip_password.c_str());
-   //acfg->contact_uri_params=pj_str((char *)(";transport=tcp;hide"));
 }
 
 void PjSipadaptr::offSoundSlot()
@@ -272,7 +270,7 @@ int PjSipadaptr::loginOnStation(){
 
 
 void PjSipadaptr::hangUp(){
-    pjsua_call_hangup(call_id,603,NULL,NULL);
+        pjsua_call_hangup(call_id,603,NULL,NULL);
 }
 
 int PjSipadaptr::getCallId()
@@ -331,156 +329,8 @@ void PjSipadaptr::setDomenPort(QString domen,QString port)
 }
 
 
-void PjSipadaptr::enumPlayoutDevices(){
-    QMap<int,QString> aud_dev;
-    //получаю список аудиоустройств
-    pj_pool_factory *pf=new pj_pool_factory();
-    pjmedia_aud_subsys_init(pf);
-    int dev_count;
-    pjmedia_aud_dev_index dev_idx;
-    pj_status_t status;
-    dev_count = pjmedia_aud_dev_count();
-    for (dev_idx=0; dev_idx<dev_count; dev_idx++) {
-    pjmedia_aud_dev_info info;
-    status = pjmedia_aud_dev_get_info(dev_idx, &info);
-    aud_dev.insert(dev_idx,info.name);
-    }
-    /*вывод аудиоустройств*/
-    QMap<int, QString>::iterator i;
-    for (i = aud_dev.begin(); i != aud_dev.end(); ++i)
-        qDebug() << i.key() << ": " << i.value() ;
-
-    /* отключение аудио */
-    //pjmedia_aud_subsys_shutdown();
-
-    {
-    pjsua_codec_info c[32];
-        unsigned i, count = PJ_ARRAY_SIZE(c);
-        char input[32];
-        char *codec, *prio;
-        pj_str_t id;
-        int new_prio;
-        pj_status_t status;
-
-        printf("List of audio codecs:\n");
-        pjsua_enum_codecs(c, &count);
-        for (i=0; i<count; ++i) {
-        printf("  %d\t%.*s\n", c[i].priority, (int)c[i].codec_id.slen,
-                       c[i].codec_id.ptr);
-        }
-    }
-
-    /*вывод индекса определённого устройства с драйвером */
-    {
-    const char *drv_name = "WMME";
-    const char *dev_name = "Wave mapper";
-    pjmedia_aud_dev_index dev_idx;
-    status = pjmedia_aud_dev_lookup(drv_name, dev_name, &dev_idx);
-    if (status==PJ_SUCCESS)
-    printf("Device index is %d\n", dev_idx);
-    }
-
-}
-
-void PjSipadaptr::music()
-{
-   /* pj_caching_pool cp;
-          pjmedia_endpt *med_endpt;
-          pj_pool_t *pool;
-          pjmedia_port *file_port;
-          pjmedia_snd_port *snd_port;
-          char tmp[10];
-          pj_status_t status;
 
 
-          status = pj_init();
-          PJ_ASSERT_RETURN(status == PJ_SUCCESS, 1);
-
-
-          pj_caching_pool_init(&cp, &pj_pool_factory_default_policy, 0);
-
-
-          status = pjmedia_endpt_create(&cp.factory, NULL, 1, &med_endpt);
-          PJ_ASSERT_RETURN(status == PJ_SUCCESS, 1);
-
-
-          pool = pj_pool_create( &cp.factory,
-                     "wav",
-                     4000,
-                     4000,
-                     NULL
-                     );
-
-
-          status = pjmedia_wav_player_port_create(  pool,
-                                "input.wav",
-                                20,
-                                0,
-                                0,
-                                &file_port
-                                );
-          if (status != PJ_SUCCESS) {
-          app_perror(THIS_FILE, "Unable to use WAV file", status);
-          return 1;
-          }
-
-
-          status = pjmedia_snd_port_create_player(
-               pool,
-               -1,
-               PJMEDIA_PIA_SRATE(&file_port->info),
-               PJMEDIA_PIA_CCNT(&file_port->info),
-               PJMEDIA_PIA_SPF(&file_port->info),
-               PJMEDIA_PIA_BITS(&file_port->info),
-               0,
-               &snd_port
-               );
-
-
-          status = pjmedia_snd_port_connect( snd_port, file_port);
-         PJ_ASSERT_RETURN(status == PJ_SUCCESS, 1);
-
-
-
-          if (fgets(tmp, sizeof(tmp), stdin) == NULL) {
-          puts("EOF while reading stdin, will quit now..");
-          }   */
-}
-
-
-
-void PjSipadaptr::addContact(){
-       pjsua_buddy_config *buddy_cfg;
-       pjsua_buddy_id buddy_id;
-       pj_status_t status = PJ_SUCCESS;
-
-       const char *baddyUrl="sip:000000002@192.168.129.70";
-       if (pjsua_verify_url(baddyUrl) != PJ_SUCCESS) {
-       qDebug()<<"Invalid URI "<<baddyUrl;
-       }
-       else{
-       buddy_cfg=new pjsua_buddy_config();
-
-       buddy_cfg->uri = pj_str((char *)("sip:0002@192.168.129.70"));
-       buddy_cfg->subscribe = PJ_TRUE;
-
-       status = pjsua_buddy_add(buddy_cfg, &buddy_id);
-        if (status == PJ_SUCCESS) {
-           qDebug()<< "New buddy "<<baddyUrl<<" added at index " << buddy_id+1;
-        }
-       }
-}
-
-
-
-void PjSipadaptr::subscribeUnsubsribe(){
-
-            int i, count;
-            count = pjsua_get_buddy_count();
-            for (i=0; i<count; ++i){
-            pjsua_buddy_subscribe_pres(i, PJ_TRUE);
-            }
-}
 
 
 

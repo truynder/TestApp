@@ -30,8 +30,8 @@ DialogContact::DialogContact(QWidget *parent) :
     connect(addcontact, SIGNAL(createButSignal()), this, SLOT(createButSlot()));
 
     ui->tableWidget->setColumnCount(4);
-    ui->tableWidget->setHorizontalHeaderItem(0, new QTableWidgetItem("name"));
-    ui->tableWidget->setHorizontalHeaderItem(1, new QTableWidgetItem("phone"));
+    ui->tableWidget->setHorizontalHeaderItem(0, new QTableWidgetItem("Имя"));
+    ui->tableWidget->setHorizontalHeaderItem(1, new QTableWidgetItem("Телефон"));
     ui->tableWidget->setHorizontalHeaderItem(2, new QTableWidgetItem(""));
     ui->tableWidget->setHorizontalHeaderItem(3, new QTableWidgetItem(""));
 
@@ -154,12 +154,14 @@ void DialogContact::delButs()
 
 void DialogContact::makeCall()
 {
+    QMap<QString,QString> data;
+    data=ReadXMLFile();
     QPushButton *click_btn = qobject_cast<QPushButton *>(sender());
     int rowId = ui->tableWidget->indexAt(click_btn->pos()).row();
     PjSipadaptr *adptr=PjSipadaptr::instance();
     emit sendPhoneSignal(ui->tableWidget->item(rowId,1)->text());
     string user= ui->tableWidget->item(rowId,1)->text().toUtf8().constData();
-    string id="sip:"+user+"@192.168.129.70;transport=tcp";
+    string id="sip:"+user+"@"+data.value("SipDomain").toStdString()+";transport=tcp";
     pj_str_t uri=pj_str((char *)id.c_str());
     adptr->makeCall(uri);
 }

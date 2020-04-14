@@ -39,6 +39,7 @@ MainWindow::MainWindow(QWidget *parent)
     ui->labelTime->hide();
     ui->lineEdit->setPlaceholderText("Введите номер");
 
+
     /*-----------------------*/
     timer=new QTimer(this);
     connect(timer, SIGNAL(timeout()),this,SLOT(getTime()));
@@ -129,7 +130,7 @@ void MainWindow::getTime()
     pjsua_call_info *ci=new pjsua_call_info();
     pjsua_call_get_info(adptr->getCallId(), ci);
 
-    ui->labelTime->setText(QString::number( ci->total_duration.sec)+"сек");
+    ui->labelTime->setText(QString::number( ci->total_duration.sec)+" сек");
 }
 
 void MainWindow::on_actionOpenDialog_triggered()
@@ -157,6 +158,11 @@ void MainWindow::onButSlot()
     ui->pushButton_5->hide();
     ui->pushButton_6->show();
     ui->pushButton_2->hide();
+    int x=ui->pushButton_6->x();
+    int y=ui->pushButton_6->y();
+    int w=ui->pushButton_6->width();
+    int h=ui->pushButton_6->height();
+    ui->pushButton_6->setGeometry(ui->pushButton_2->geometry());
 }
 
 
@@ -182,6 +188,7 @@ void MainWindow::showButSlot()
     ui->pushButton_2->hide();
     ui->pushButton_6->setGeometry(geom);
     ui->pushButton_6->show();
+    ui->lineEdit->setDisabled(true);
 }
 
 void MainWindow::showHoldButSlot()
@@ -370,11 +377,11 @@ void MainWindow::incomingCallSlot(QString remotename)
     ui->pushButton_5->setGeometry(ui->pushButton_2->geometry());
     ui->pushButton_5->show();
     ui->labelTime->show();
+    ui->pushButton_5->setToolTip("Ответить на звонок");
 
 
     ui->labelRemoteName->show();
     ui->labelRemoteName->setText(remotename);
-   // ui->labelRemoteName->setGeometry(ui->lineEdit->geometry());
     ui->lineEdit->hide();
 }
 
@@ -388,6 +395,8 @@ void MainWindow::stateDisconnectedSlot()
     ui->labelRemoteName->hide();
     ui->lineEdit->show();
     ui->labelTime->hide();
+    ui->lineEdit->setEnabled(true);
+    //incomingCall=0;
 }
 
 void MainWindow::showHold()

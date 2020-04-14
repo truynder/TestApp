@@ -79,7 +79,7 @@ background: rgb(219, 225, 233);
     </property>
     <property name="styleSheet">
      <string notr="true">QWidget{
-background:white;
+background:rgba(192, 199, 204,0.4);
 border: 2px solid;
 border-color:rgb(148, 168, 199);
 border-radius: 10px;
@@ -89,7 +89,7 @@ border-radius: 10px;
     <widget class="QLabel" name="labelRemoteName">
      <property name="geometry">
       <rect>
-       <x>100</x>
+       <x>95</x>
        <y>30</y>
        <width>71</width>
        <height>20</height>
@@ -104,7 +104,9 @@ border-radius: 10px;
      </property>
      <property name="styleSheet">
       <string notr="true">QLabel{
-border:none
+color:rgba(17, 191, 75, 1);
+border:none;
+background-color:none;
 }</string>
      </property>
      <property name="text">
@@ -284,7 +286,7 @@ background: white;
     <widget class="QLabel" name="labelTime">
      <property name="geometry">
       <rect>
-       <x>110</x>
+       <x>105</x>
        <y>60</y>
        <width>91</width>
        <height>16</height>
@@ -298,6 +300,7 @@ background: white;
      <property name="styleSheet">
       <string notr="true">QLabel{
 border:none;
+background:none;
 }</string>
      </property>
      <property name="text">
